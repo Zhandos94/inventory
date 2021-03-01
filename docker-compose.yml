@@ -1,0 +1,84 @@
+version: '3'
+services:
+
+  #Api Service
+  api:
+    build:
+      context: docker/api
+    image: digitalocean.com/php
+    container_name: inv_api
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_TAGS: dev
+    working_dir: /var/www/sites/api/
+    volumes:
+      - ./api/:/var/www/sites/api/
+      - ./docker/api/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  #Frontend Service
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    container_name: inv_frontend
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    working_dir: /var/www/frontend
+    volumes:
+      - ./frontend/:/var/www/frontend
+      - "/frontend/node_modules"
+    ports:
+      - '8182:8080'
+    networks:
+      - app-network
+
+  frontend-nodejs:
+    image: node:10.11-jessie
+    volumes:
+      - ./frontend:/var/www/frontend
+    working_dir: /var/www/frontend
+    tty: true
+
+  #Nginx for api Service
+  webserver:
+    image: nginx:alpine
+    container_name: inv_webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8000:80"
+      - "443:443"
+    volumes:
+      - ./api/:/var/www/sites/api/
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  db:
+    container_name: inv_db
+    image: postgres:11.6
+    restart: unless-stopped
+    shm_size: 1g
+    environment:
+      POSTGRES_USER: "inventory"
+      POSTGRES_PASSWORD: "inventory"
+      POSTGRES_DB: "inventory"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    ports:
+      - "3307:5432"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+#Volumes
+volumes:
+  dbdata:
+    driver: local
