@@ -26,3 +26,17 @@ new Vue({
   vuetify,
   render: function (h) { return h(App) }
 }).$mount('#app')
+
+const toast = Vue.swal.mixin({
+  toast: true,
+  position: 'top-right',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Vue.swal.stopTimer)
+    toast.addEventListener('mouseleave', Vue.swal.resumeTimer)
+  }
+})
+
+window.toast = toast

@@ -72,8 +72,6 @@ export default {
     if (!User.loggedIn()) {
       this.$router.push({ name: '/' })
     }
-
-    console.info(this)
   },
   data () {
     return {

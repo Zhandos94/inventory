@@ -18,6 +18,7 @@
                 type="text"
                 v-model="form.email"
                 :rules="emailRules"
+                :error-messages="errors.email ? errors.email : null"
               ></v-text-field>
 
               <v-text-field
@@ -26,15 +27,15 @@
                 name="password"
                 prepend-icon="mdi-lock"
                 type="password"
-                :counter="8"
                 v-model="form.password"
                 :rules="passwordRules"
+                :error-messages="errors.password ? errors.password : null"
               ></v-text-field>
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn block color="primary" @click="onSubmit" :disabled="!valid">Login</v-btn>
+            <v-btn block color="primary" @click="onSubmit" :disabled="!valid && disabledBtn">Login</v-btn>
           </v-card-actions>
 
           <br>
@@ -68,28 +69,46 @@ export default {
         email: '',
         password: ''
       },
+      errors: {},
       valid: false,
+      disabledBtn: true,
       emailRules: [
         v => !!v || 'E-mail is required',
         v => /.+@.+\..+/.test(v) || 'Is not t valid e-mail'
       ],
       passwordRules: [
-        v => !!v || 'Password is required',
-        v => (v && v.length >= 8) || 'Password must be equal or more than 6 characters'
+        v => !!v || 'Password is required'
       ]
     }
   },
   methods: {
     onSubmit () {
-      console.info('main')
-      console.log(this.axios)
+      // Vue.swal.mixin({
+      //   toast: true,
+      //   position: 'top-right',
+      //   showConfirmButton: false,
+      //   timer: 3000,
+      //   timerProgressBar: true,
+      //   didOpen: (toast) => {
+      //     toast.addEventListener('mouseenter', Vue.swal.stopTimer)
+      //     toast.addEventListener('mouseleave', Vue.swal.resumeTimer)
+      //   }
+      // })
       if (this.$refs.form.validate()) {
+        this.disabledBtn = true
+
         this.axios.post('http://localhost:8000/api/auth/login', this.form)
           .then(res => {
+            this.valid = true
             User.responseAfterLogin(res)
             this.$router.push({ name: 'home' })
           })
-          .catch(error => console.error(error.response.data))
+          .catch((error) => {
+            this.errors = error.response.data.errors
+          })
+          .finally(() => {
+            this.disabledBtn = false
+          })
       }
     }
   }

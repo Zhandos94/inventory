@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -25,12 +24,17 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login()
+    public function login(Request $request)
     {
+        $request->validate( [
+            'email' => ['required'],
+            'password' => ['required'],
+        ]);
+
         $credentials = request(['email', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Email or password invalid'], 401);
+            return response()->json(['errors' => ['email' => 'Email or password invalid']], 401);
         }
 
         return $this->respondWithToken($token);
@@ -86,7 +90,7 @@ class AuthController extends Controller
     }
 
     public function register(Request $request) {
-        $validation = $request->validateWithBag('users', [
+        $request->validateWithBag('users', [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'unique:users', 'max:255'],
             'password' => ['required', 'string', 'confirmed'],
@@ -97,7 +101,7 @@ class AuthController extends Controller
         $data['email'] = $request->email;
         $data['password'] = Hash::make($request->password);
 
-        $users = User::create($data);
+        User::create($data);
 
         return $this->login($request);
     }
