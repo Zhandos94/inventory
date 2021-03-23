@@ -57,9 +57,6 @@
       </v-layout>
     </v-container>
 
-    <br>
-    <button @click="showAlert">Hello world</button>
-
   </div>
 </template>
 
@@ -106,7 +103,22 @@ export default {
   },
   methods: {
     showAlert () {
-      this.$swal('Hello Vue world!!!')
+      const toast = this.$swal.mixin({
+        toast: false,
+        position: 'top-right',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: false,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', this.$swal.stopTimer)
+          toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+        }
+      })
+
+      toast.fire({
+        icon: 'success',
+        title: 'Signed in successfully'
+      })
     }
   }
 }

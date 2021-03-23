@@ -40,7 +40,7 @@
 
           <br>
           <v-row justify="center">
-            <router-link to="registration">Create account</router-link>
+            <router-link to="registration">Registration</router-link>
           </v-row>
           <v-row justify="center">
             <router-link to="forget-password">Forget password</router-link>

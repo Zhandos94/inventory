@@ -26,7 +26,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $request->validate( [
+        $request->validate([
             'email' => ['required'],
             'password' => ['required'],
         ]);
@@ -59,7 +59,7 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['status' => true, 'message' => 'Successfully logged out']);
     }
 
     /**
@@ -90,18 +90,15 @@ class AuthController extends Controller
     }
 
     public function register(Request $request) {
-        $request->validateWithBag('users', [
+        $requestData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'unique:users', 'max:255'],
             'password' => ['required', 'string', 'confirmed'],
         ]);
 
-        $data = [];
-        $data['name']=  $request->name;
-        $data['email'] = $request->email;
-        $data['password'] = Hash::make($request->password);
+        $requestData['password'] = Hash::make($request->password);
 
-        User::create($data);
+        User::create($requestData);
 
         return $this->login($request);
     }

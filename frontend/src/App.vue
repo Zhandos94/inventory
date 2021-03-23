@@ -32,6 +32,10 @@
       <v-btn icon>
         <v-icon>mdi-dots-vertical</v-icon>
       </v-btn>
+
+      <v-btn @click="logout" :disabled="disabledBtn" v-if="!login">
+        Logout
+      </v-btn>
     </v-app-bar>
 
     <v-content>
@@ -46,25 +50,55 @@
 </template>
 
 <script>
+import AppStorage from './helpers/AppStorage'
+import User from './helpers/User'
+
 export default {
   name: 'App',
-
   props: {
     source: String
   },
-
   components: {},
-
+  beforeCreate () {
+    if (User.loggedIn()) {
+      this.login = true
+    }
+  },
   data: () => ({
+    login: false,
     drawer: null,
+    disabledBtn: false,
     links: [
       { title: 'Login', icon: 'key', url: '/login' },
       { title: 'Registration', icon: 'mdi-email', url: '/registration' },
       { title: 'Orders', icon: 'mdi-email', url: '/orders' },
-      { title: 'New ad', icon: 'mdi-email', url: '/new' },
-      { title: 'My ad', icon: 'mdi-email', url: '/list' }
+      { title: 'Add', icon: 'mdi-email', url: '/list' },
     ]
-  })
+  }),
+  methods: {
+    logout () {
+      this.disabledBtn = true
+      const token = AppStorage.getToken()
+      this.axios.post('http://localhost:8000/api/auth/logout', null, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(res => {
+          if (res.status) {
+            AppStorage.clear()
+            this.$router.push({ name: 'login' })
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+        .finally(() => {
+          this.disabledBtn = false
+        })
+    }
+  }
 }
 </script>
 
