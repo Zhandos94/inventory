@@ -83,22 +83,12 @@ export default {
   },
   methods: {
     onSubmit () {
-      // Vue.swal.mixin({
-      //   toast: true,
-      //   position: 'top-right',
-      //   showConfirmButton: false,
-      //   timer: 3000,
-      //   timerProgressBar: true,
-      //   didOpen: (toast) => {
-      //     toast.addEventListener('mouseenter', Vue.swal.stopTimer)
-      //     toast.addEventListener('mouseleave', Vue.swal.resumeTimer)
-      //   }
-      // })
       if (this.$refs.form.validate()) {
         this.disabledBtn = true
 
         this.axios.post('http://localhost:8000/api/auth/login', this.form)
           .then(res => {
+            this.$store.dispatch('setLogin', { login: true })
             this.valid = true
             User.responseAfterLogin(res)
             this.$router.push({ name: 'home' })

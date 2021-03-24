@@ -8,6 +8,7 @@ import Ad from '@/components/ads/Ad'
 import NewAd from '@/components/ads/NewAd'
 import Order from '@/components/users/Order'
 import AdList from '@/components/ads/AdList'
+import Logout from '@/components/auth/Logout'
 
 Vue.use(VueRouter)
 
@@ -16,6 +17,11 @@ const routes = [
     path: '/',
     name: 'login',
     component: Login
+  },
+  {
+    path: '/logout',
+    name: 'logout',
+    component: Logout
   },
   {
     path: '/home',

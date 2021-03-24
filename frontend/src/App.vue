@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer v-model="drawer" app temporary>
+    <v-navigation-drawer v-model="drawer" app temporary v-if="authorised">
 
       <v-list dense>
         <v-list-item link v-for="link of links" :key="link.title" :to="link.url">
@@ -14,7 +14,8 @@
       </v-list>
 
     </v-navigation-drawer>
-    <v-app-bar app color="indigo" dark>
+
+    <v-app-bar app color="indigo" dark v-if="authorised">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>
         <router-link to="/" tag="span" class="pointer">Shop</router-link>
@@ -28,14 +29,7 @@
       <v-btn icon>
         <v-icon>mdi-heart</v-icon>
       </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-dots-vertical</v-icon>
-      </v-btn>
-
-      <v-btn @click="logout" :disabled="disabledBtn" v-if="!login">
-        Logout
-      </v-btn>
+      <router-link to="/logout" tag="span" class="pointer" :disabled="disabledBtn" v-if="authorised">Logout</router-link>
     </v-app-bar>
 
     <v-content>
@@ -43,14 +37,14 @@
         <router-view></router-view>
 
     </v-content>
-    <v-footer color="indigo" app>
+
+    <v-footer color="indigo" app v-if="authorised">
       <span class="white--text">&copy; 2020</span>
     </v-footer>
   </v-app>
 </template>
 
 <script>
-import AppStorage from './helpers/AppStorage'
 import User from './helpers/User'
 
 export default {
@@ -59,46 +53,31 @@ export default {
     source: String
   },
   components: {},
-  beforeCreate () {
-    if (User.loggedIn()) {
-      this.login = true
+  computed: {
+    authorised () {
+      let userAuthorised = false
+
+      if (User.loggedIn()) {
+        userAuthorised = this.$store.dispatch('setLogin', true)
+      }
+      return userAuthorised
+    }
+  },
+  watch: {
+    authorised () {
+      return this.$store.state.authorise.userAuthorised
     }
   },
   data: () => ({
-    login: false,
     drawer: null,
     disabledBtn: false,
     links: [
       { title: 'Login', icon: 'key', url: '/login' },
       { title: 'Registration', icon: 'mdi-email', url: '/registration' },
       { title: 'Orders', icon: 'mdi-email', url: '/orders' },
-      { title: 'Add', icon: 'mdi-email', url: '/list' },
+      { title: 'Add', icon: 'mdi-email', url: '/list' }
     ]
-  }),
-  methods: {
-    logout () {
-      this.disabledBtn = true
-      const token = AppStorage.getToken()
-      this.axios.post('http://localhost:8000/api/auth/logout', null, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        }
-      })
-        .then(res => {
-          if (res.status) {
-            AppStorage.clear()
-            this.$router.push({ name: 'login' })
-          }
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-        .finally(() => {
-          this.disabledBtn = false
-        })
-    }
-  }
+  })
 }
 </script>
 
