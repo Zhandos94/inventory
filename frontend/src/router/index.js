@@ -9,6 +9,7 @@ import NewAd from '@/components/ads/NewAd'
 import Order from '@/components/users/Order'
 import AdList from '@/components/ads/AdList'
 import Logout from '@/components/auth/Logout'
+import EmployeeCreate from '@/components/employee/Create'
 
 Vue.use(VueRouter)
 
@@ -38,6 +39,11 @@ const routes = [
     path: '/forget-password',
     name: 'forget',
     component: Forget
+  },
+  {
+    path: '/employee/create',
+    name: 'create',
+    component: EmployeeCreate
   },
   {
     path: '/ad/:id',

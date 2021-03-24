@@ -48,7 +48,7 @@
                 Share
               </v-btn>
 
-              <v-btn raised class="primary">
+              <v-btn raised class="primary" @click="showAlert">
                 Buy
               </v-btn>
             </v-card-actions>
@@ -103,22 +103,27 @@ export default {
   },
   methods: {
     showAlert () {
-      const toast = this.$swal.mixin({
-        toast: false,
+      this.$toast.open({
+        message: 'Something went wrong!',
         position: 'top-right',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: false,
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', this.$swal.stopTimer)
-          toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-        }
+        type: 'success'
       })
-
-      toast.fire({
-        icon: 'success',
-        title: 'Signed in successfully'
-      })
+      // const toast = this.$swal.mixin({
+      //   toast: false,
+      //   position: 'top-right',
+      //   showConfirmButton: false,
+      //   timer: 3000,
+      //   timerProgressBar: false,
+      //   didOpen: (toast) => {
+      //     toast.addEventListener('mouseenter', this.$swal.stopTimer)
+      //     toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+      //   }
+      // })
+      //
+      // toast.fire({
+      //   icon: 'success',
+      //   title: 'Signed in successfully'
+      // })
     }
   }
 }
