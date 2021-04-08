@@ -9,7 +9,8 @@ import NewAd from '@/components/ads/NewAd'
 import Order from '@/components/users/Order'
 import AdList from '@/components/ads/AdList'
 import Logout from '@/components/auth/Logout'
-import EmployeeCreate from '@/components/employee/Create'
+import Employee from '@/components/employee/Employee'
+import EmployeeAdd from '@/components/employee/EmployeeAdd'
 
 Vue.use(VueRouter)
 
@@ -41,9 +42,14 @@ const routes = [
     component: Forget
   },
   {
+    path: '/employee',
+    name: 'create',
+    component: Employee
+  },
+  {
     path: '/employee/create',
     name: 'create',
-    component: EmployeeCreate
+    component: EmployeeAdd
   },
   {
     path: '/ad/:id',

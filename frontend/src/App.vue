@@ -75,7 +75,7 @@ export default {
       { title: 'Login', icon: 'key', url: '/login' },
       { title: 'Registration', icon: 'mdi-email', url: '/registration' },
       { title: 'Orders', icon: 'mdi-email', url: '/orders' },
-      { title: 'Add', icon: 'mdi-email', url: '/list' }
+      { title: 'Employee', icon: 'mdi-email', url: '/employee' }
     ]
   })
 }

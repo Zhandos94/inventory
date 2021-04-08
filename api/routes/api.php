@@ -33,3 +33,6 @@ Route::group([
     Route::post('register', 'AuthController@register');
 
 });
+
+
+Route::ApiResource('/employee', 'Api\EmployeeController');
