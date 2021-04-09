@@ -16,9 +16,22 @@ class EmployeeController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = $request->perPage ?: 1;
+        $perPage = $request->get('perPage') ?: 1;
+        $sortBy = $request->get('sortBy') ? $request->get('sortBy')[0]: 'id';
+        $sortDesc = $request->get('sortDesc') ?: false;
+        $sortType = $sortDesc ? 'desc' : 'asc';
+        $search = json_decode($request->get('search'));
 
-        $data = Employee::paginate($perPage);
+        $query = Employee::orderBy($sortBy, $sortType);
+
+        if ($search->name) {
+            $query->where('name', 'like', $search->name . '%');
+        }
+        if ($search->email) {
+            $query->where('email', 'like', $search->email . '%');
+        }
+
+        $data = $query->paginate($perPage);
 
         return $data;
     }
